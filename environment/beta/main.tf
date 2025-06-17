@@ -4,6 +4,16 @@ module "rg_module" {
   resource_group_location = "centralindia"
 }
 
+module "kv_module" {
+  depends_on = [ module.rg_module ]
+  source = "../../module/azurerm_key_vault"
+  kv_name = "tani-kv"
+  kv_location = "westus"
+  resource_group_name = "tanii_rg"
+  tenant_id = "f8b0c1d2-3e4f-5a6b-7c8d-9e0f1a2b3c4d"
+}
+
+
 module "vnet_module"{
   depends_on = [ module.rg_module ]
   source ="../../module/azurerm_vnet"
@@ -12,50 +22,86 @@ module "vnet_module"{
   resource_group_name = "tanii_rg"
 }
 
-module "subnet_module" {
+module "f_subnet_module" {
   depends_on = [ module.vnet_module ]
   source = "../../module/azurerm_subnet"
   subnet_name = "frontend_subnet"
   vnet_name = "todo_vnet"
   resource_group_name = "tanii_rg"
-  address_prefixes = ["10.0.1.0/24"]
+  address_prefixes = ["10.0.0.0/17"]
+}
+module "b_subnet_module" {
+  depends_on = [ module.vnet_module ]
+  source = "../../module/azurerm_subnet"
+  subnet_name = "backend_subnet"
+  vnet_name = "todo_vnet"
+  resource_group_name = "tanii_rg"
+  address_prefixes = ["10.0.128.0/17"]
 }
 
-module "pip_module" {
+module "f_pip_module" {
   depends_on = [ module.rg_module] 
   source = "../../module/azurerm_pip"
-  pip_name = "todo_pip"
+  pip_name = "f_todo_pip"
   resource_group_name = "tanii_rg"
   location = "westus"
 }
 
-module "nic_module" {
-  # depends_on = [ module.subnet_module, module.pip_module ]
-  source = "../../module/azurerm_nic"
-  nic_name = "todo_nic"
+module "b_pip_module" {
+  depends_on = [ module.rg_module] 
+  source = "../../module/azurerm_pip"
+  pip_name = "b_todo_pip"
   resource_group_name = "tanii_rg"
   location = "westus"
-  subnet_id = module.subnet_module.subnet_id
-  public_ip_address_id = module.pip_module.pip_id
 }
 
-module "vm_module" {
-  depends_on = [ module.subnet_module, module.nic_module ]
+module "f_vm_module" {
+  depends_on = [ module.f_subnet_module, module.kv_module]
   source = "../../module/azurerm_vm"
-  vm_name = "todo-vm"
+  vm_name = "f-todo-vm"
   resource_group_name = "tanii_rg"
   location = "westus"
-  network_interface_ids = [module.nic_module.nic_id]
+  nic_name = "f_todo_nic"
   publisher_id = "canonical"
   product_id = "0001-com-ubuntu-server-jammy"
   plan_id = "22_04-lts"
+  subnet_name = "frontend_subnet"
+  vnet_name = "todo_vnet"
+  pip_name = "f_todo_pip"
+}
+module "b_vm_module" {
+  depends_on = [ module.b_subnet_module, module.kv_module]
+  source = "../../module/azurerm_vm"
+  vm_name = "b-todo-vm"
+  resource_group_name = "tanii_rg"
+  location = "westus"
+  nic_name = "b_todo_nic"
+  publisher_id = "canonical"
+  product_id = "0001-com-ubuntu-server-jammy"
+  plan_id = "22_04-lts"
+  subnet_name = "backend_subnet"
+  vnet_name = "todo_vnet"
+  pip_name = "b_todo_pip"
 }
 
-output "public_ip_address" {
-  value = module.pip_module.ip_address
+
+module "db_server_module" {
+  depends_on = [ module.rg_module ]
+  source = "../../module/azurerm_db_server"
+  server_name = "mera-db-server"
+  resource_group_name = "tanii_rg"
+  location = "westus"
+  admin_login = "dbadmin"
+  admin_pswd = "P@ssw0rd1234!"
 }
 
-
+module "db_module" {
+  depends_on = [ module.db_server_module ]
+  source = "../../module/azurerm_database"
+  db_name = "todo-db"
+  server_name= "mera-db-server"
+  resource_group_name = "tanii_rg"
+}
 
 
 

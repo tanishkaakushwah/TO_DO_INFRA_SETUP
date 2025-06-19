@@ -20,15 +20,11 @@ resource "azurerm_network_interface" "nic_block" {
   }
 }
 data "azurerm_key_vault" "kv_data" {
-  name                = "tani-kv"
-  resource_group_name = "tanii_rg"
-}
-data "azurerm_key_vault_secret" "username" {
-  name         = "secret-username"
-  key_vault_id = data.azurerm_key_vault.kv_data.id
+  name                = var.kv_name
+  resource_group_name = var.resource_group_name
 }
 data "azurerm_key_vault_secret" "pswd" {
-  name         = "secret-password"
+  name         = "vm-pswd"
   key_vault_id = data.azurerm_key_vault.kv_data.id
 }
 
@@ -38,7 +34,7 @@ resource "azurerm_linux_virtual_machine" "vm_block" {
   resource_group_name = var.resource_group_name
   location            = var.location
   size                = "Standard_F2"
-  admin_username      = data.azurerm_key_vault_secret.username.value
+  admin_username      = "k636945"
   admin_password      = data.azurerm_key_vault_secret.pswd.value
   disable_password_authentication = false
   network_interface_ids = [azurerm_network_interface.nic_block.id]
@@ -65,3 +61,4 @@ variable "nic_name" {}
 variable "subnet_name" {}
 variable "vnet_name" {}
 variable "pip_name" {}
+variable "kv_name" {}

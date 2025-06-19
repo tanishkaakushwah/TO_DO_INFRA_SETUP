@@ -1,5 +1,5 @@
-variable "rg_name"{
-    default = "tanii_rg"
+variable "rg_name" {
+  default = "tanii_rg"
 }
 variable "rg_location" {
   default = "centralindia"
@@ -17,7 +17,7 @@ variable "b_subnet_name" {
   default = "backend_subnet"
 }
 variable "pip_name" {
-  default = "todo_pip" 
+  default = "todo_pip"
 }
 # variable "pip_location" {
 #   default = "westus"
@@ -26,7 +26,7 @@ variable "nic_name" {
   default = "todo_nic"
 }
 variable "vm_name" {
-  default = "todo-vm"     
+  default = "todo-vm"
 }
 variable "publisher_id" {
   default = "canonical"

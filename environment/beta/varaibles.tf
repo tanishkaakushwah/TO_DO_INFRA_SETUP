@@ -1,5 +1,5 @@
 variable "rg_name" {
-  default = "tanii_rg"
+  default = "taani_rg"
 }
 variable "rg_location" {
   default = "centralindia"
@@ -10,23 +10,22 @@ variable "vnet_name" {
 variable "vnet_location" {
   default = "westus"
 }
-variable "f_subnet_name" {
-  default = "frontend_subnet"
+variable "kv_name" {
+  default = "taani-kv"
 }
-variable "b_subnet_name" {
-  default = "backend_subnet"
+variable "kv_sku" {
+  default = "standard"
 }
-variable "pip_name" {
-  default = "todo_pip"
+
+variable "kv_location" {
+  default = "centralus"
 }
-# variable "pip_location" {
-#   default = "westus"
-# }
-variable "nic_name" {
-  default = "todo_nic"
+
+variable "nsg_name" {
+  default = "frontend-nsg"
 }
-variable "vm_name" {
-  default = "todo-vm"
+variable "db_server_location" {
+  default = "centralindia"
 }
 variable "publisher_id" {
   default = "canonical"
@@ -38,8 +37,23 @@ variable "plan_id" {
   default = "22_04-lts"
 }
 variable "db_server_name" {
-  default = "mera-db-server"
+  default = "mera-db-server79"
 }
 variable "db_name" {
   default = "todo-db"
+}
+variable "subnet_names" {
+  type = map(string)
+}
+
+variable "pip_names" {
+  type = set(string)
+}
+
+variable "vm_config" {
+  type = map(object({
+    nic_name    = string
+    subnet_name = string
+    pip_name    = string
+  }))
 }

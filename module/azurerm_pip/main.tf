@@ -9,10 +9,10 @@ variable "pip_name" {}
 variable "resource_group_name" {}
 variable "location" {}
 
-output "pip_id"{
+output "pip_id" {
   value = azurerm_public_ip.pip_block.id
 }
 output "ip_address" {
   value = azurerm_public_ip.pip_block.ip_address
-  
+
 }

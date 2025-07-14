@@ -9,12 +9,14 @@ data "azurerm_key_vault_secret" "db_pswd" {
 }
 
 resource "azurerm_mssql_server" "server_block" {
-  name                         = var.server_name
-  resource_group_name          = var.resource_group_name
-  location                     = var.location
-  version                      = "12.0"
-  administrator_login          = var.admin_login
-  administrator_login_password = data.azurerm_key_vault_secret.db_pswd.value
+  name                          = var.server_name
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  version                       = "12.0"
+  administrator_login           = var.admin_login
+  administrator_login_password  = data.azurerm_key_vault_secret.db_pswd.value
+  public_network_access_enabled = false
+  minimum_tls_version           = "1.2"
 }
 
 variable "server_name" {}

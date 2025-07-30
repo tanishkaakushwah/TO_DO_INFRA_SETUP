@@ -11,7 +11,7 @@ variable "vnet_location" {
   default = "westus"
 }
 variable "kv_name" {
-  default = "taani-kv"
+  default = "tanishka-kv02"
 }
 variable "kv_sku" {
   default = "standard"
